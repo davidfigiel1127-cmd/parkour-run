@@ -26,7 +26,8 @@ const STEP = 1 / 120;
 let W = 960, H = 540, scale = 1, dpr = 1, offY = 0;
 function resize() {
   dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const vw = window.innerWidth, vh = window.innerHeight;
+  const r = canvas.getBoundingClientRect();
+  const vw = r.width || window.innerWidth, vh = r.height || window.innerHeight;
   // Keep at least 540 units tall and 760 units wide visible.
   scale = Math.min(vh / 540, vw / 760);
   W = vw / scale;
@@ -250,7 +251,10 @@ function hitButton(px, py) {
   for (const b of uiButtons()) if (px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h) return b.id;
   return null;
 }
-function toGame(clientX, clientY) { return { x: clientX / scale, y: clientY / scale }; }
+function toGame(clientX, clientY) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (clientX - r.left) / scale, y: (clientY - r.top) / scale };
+}
 
 canvas.addEventListener('touchstart', e => {
   e.preventDefault();
